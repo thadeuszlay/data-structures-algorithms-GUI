@@ -158,6 +158,16 @@ public class controller {
                 case "Selection Sort":
                     theModel.selectionSort();
                     break;
+                case "Bucket Sort":
+                    break;
+                case "Radix Sort":
+                    break;
+                case "Quick Sort":
+                    break;
+                case "Merge Sort":
+                    break;
+                case "Heap Sort":
+                    break;
                 default:
                     System.out.println("Please selet a sorting algorithm, in order to sort.");
                     break;
