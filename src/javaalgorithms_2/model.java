@@ -16,7 +16,7 @@ public class model {
     private int arraySize;
     private String sortingAlgorithm="";
     private String output="";
-    private String[] columnNames= {"Index","Content"};
+    private String[]  columnNames= {"Index","Content"};
     private interactiveTableModel myModel=new interactiveTableModel(getColumnNames());
     
     /**
@@ -136,27 +136,40 @@ public class model {
     }
     /*
      Insertion sort takes the first member of the unsorted list and 
-     * goes through the sorted list from behind step by step. At each step it 
-     * checks whether the selected member of the unsorted list is smaller than 
-     * the selected value in the sorted list.
+     * goes through the sorted list from it's last member step by step.
+     * At each step it checks whether the selected member of the unsorted list 
+     * is smaller than the selected member in the sorted list.
      * If it is, it puts it right after the 
-     * first element that is smaller than him. 
+     * first element that is smaller than him. Then it takes the next element
+     * in the unsorted list and again compares it with the members of the 
+     * unsorted list until it finds a value that is smaller than the one
+     * that is selected from the sorted list.
      * Because the Insertion sort checks the first member
      * of the unsorted list it finishes when it has reached the end of the
      * unsorted list.
-     * <-unsorted list-><--sorted list-->
+     * <-sorted list-><--unsorted list-->
      * 
      * O(n^2)
      */
     public void insertionSort(){
         for (int i=0; i<arraySize; i++){
-            
+            //get the first one of the sorted list and compare it to the member
+            //at the end of the sorted list.  
+            //int j=i;
+            int j=i;
+            output+="\nCheck in sorted list i("+i+") "+(String) myModel.getValueAt(j, 1);
+
+            while(j>0 && Integer.valueOf((String) myModel.getValueAt(j-1, 1)) > Integer.valueOf((String) myModel.getValueAt(j, 1))){
+                swap(j, j-1);
+                j--;
+            }            
         }
     }
     
     /*
-     * No really a sorting algorithm. Prozcess to improve sorting efficiency
-     * Usually used in conjuction with another sorting algorithm.
+     * The Bucket sorting algorithm is not really a sorting algorithm. Instead
+     * it's rather a prozcess to improve sorting efficiency and is Usually used 
+     * in conjuction with another sorting algorithm, like insertion sort.
      * 
      * 1. In cojunction with other sorting algorithms:
      * The aim is to apply a sorting algorithm not to an entire list but
@@ -172,17 +185,21 @@ public class model {
      * After that all of buckets are merged into a big list again.
      * 
      * 2. Bucket sort alone:
-     * With Bucket sort alone you create for a large list smaller list 
+     * With Bucket sort alone you create for a large list smaller lists 
      * - exactly the same as in the example above. After that you again create 
      * smaller buckets within each buckets, until there's only one element in this
-     * bucket. If there's only one element in the bucket, you merge the bucket 
-     * into a large list again.
+     * bucket. These created buckets are set in order already, so when there's only 
+     * one element in the bucket, you merge the buckets into a large list and get
+     * a list that is sorted.
+     * 
      * This technique reqires recursion which in turn is costly in terms of 
      * ressources and time.
      * 
      * O(n^2)
      */
     public void bucketSort(){
+        // separate into 3 buckets
+        // 
         
     }
     /*Efficient for larger arrays. Is done for non-comaritive integer sorting algortihm
@@ -293,15 +310,18 @@ public class model {
 
 //------------------------------------------------------------------------
     private void swap(int iAscend, int iDescend){
-        int interim=Integer.valueOf((String)myModel.getValueAt(iAscend, 1));
+        int interimValue=Integer.valueOf((String)myModel.getValueAt(iAscend, 1));
         myModel.setValueAt(myModel.getValueAt(iDescend, 1), iAscend, 1);
-        myModel.setValueAt(interim, iDescend, 1);
+        myModel.setValueAt(interimValue, iDescend, 1);
+        System.out.println("SWAP! New position: j("+iAscend+"): "+(String) myModel.getValueAt(iAscend, 1)+" -> j+1("+iDescend+"): "+(String) myModel.getValueAt(iDescend, 1));
+        output+="\nSWAP! New position: j("+iAscend+"): "+(String) myModel.getValueAt(iAscend, 1)+" -> j+1("+iDescend+"): "+(String) myModel.getValueAt(iDescend, 1);
         //setMyModel(myModel);
     }
     
     public void printOutArray(){
         for (int i=0; i<arraySize; i++){
             System.out.println(i+" | "+(String) myModel.getValueAt(i, 1));
+            output+="\n"+i+" | "+(String) myModel.getValueAt(i, 1);
         }
 
     }

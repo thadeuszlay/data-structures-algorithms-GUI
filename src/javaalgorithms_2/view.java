@@ -30,10 +30,11 @@ public class view extends JFrame {
     
     private JComboBox dataStructureList=new JComboBox(dataStructureTypes); 
     private JLabel lSize=new JLabel("Size");
-    private JTextField tArraySize=new JTextField(10);
+    private JTextField tArraySize=new JTextField(6);
     private JButton bCreateArray=new JButton("Create Array");
     private JScrollPane jscrollPane=new JScrollPane();
     private JTable table=new JTable();
+    private JRadioButton rUnique=new JRadioButton("Unique values");
     private JButton bFill=new JButton("Fill randomly");
     private JButton bEmpty=new JButton("Empty Table");
     private JTextField tValue=new JTextField(6);
@@ -73,6 +74,8 @@ public class view extends JFrame {
         Dimension d=table.getPreferredSize();
         jscrollPane.setPreferredSize(new Dimension(d.width, 200));
         panel.add(jscrollPane);
+        panel.add(rUnique);
+        rUnique.setSelected(true);
         panel.add(bFill);
         panel.add(bEmpty);
         panel.add(tValue);
@@ -142,6 +145,10 @@ public class view extends JFrame {
         }
     }
     
+    public boolean getRUnique(){
+        return rUnique.isSelected();
+    }
+        
     void addComboBoxSelectListener(ActionListener ListenForComboSelect){
         dataStructureList.addActionListener(ListenForComboSelect);
     }

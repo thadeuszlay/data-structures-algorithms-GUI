@@ -78,13 +78,41 @@ public class controller {
         public void actionPerformed(ActionEvent e) {
             theModel.deleteTable();
             int arraySize=theModel.getArraySize();
-            for (int i=0;i<arraySize;i++){
-                String randomValue=String.valueOf((int)Math.floor(Math.random()*10)+10);
-                theModel.addRow(String.valueOf(i), randomValue);
-                theView.updateTable(theModel.getMyModel(), theModel.getColumnNames());
+            String randomValue="";
+            if (theView.getRUnique()){
+                if (arraySize<11){
+                    // fill with unique items
+                    for (int i=0;i<arraySize;i++){
+                        boolean notUnique;
+                        do{
+                            notUnique=false;
+                            randomValue=String.valueOf((int)Math.floor(Math.random()*10));
+                            if (i>0){
+                                //goes through the whole array...
+                                for (int j=0;j<=i-1;j++ ){
+                                    //...and proves whether 
+                                    if(theModel.getMyModel().getValueAt(j, 1).equals(randomValue)){
+                                        notUnique=true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }while(notUnique);                        
+                        theModel.addRow(String.valueOf(i), randomValue);
+                        theView.updateTable(theModel.getMyModel(), theModel.getColumnNames());
+                    }
+                }else{
+                    theView.popUpMessage("Select a Array Size between 1 and 10!");
+                }
+            }else{
+                for (int i=0;i<arraySize;i++){
+                    randomValue=String.valueOf((int)Math.floor(Math.random()*10));
+                    theModel.addRow(String.valueOf(i), randomValue);
+                    theView.updateTable(theModel.getMyModel(), theModel.getColumnNames());
+                }
             }
-        }
-    }    
+        }   
+    }
     
     class emptyTable implements ActionListener{
 
@@ -154,6 +182,7 @@ public class controller {
                     break;
                 case "Insertion Sort":
                     System.out.println("Insertion Sort was selected");
+                    theModel.insertionSort();
                     break;
                 case "Selection Sort":
                     theModel.selectionSort();
