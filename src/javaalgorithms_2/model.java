@@ -4,7 +4,9 @@
  */
 package javaalgorithms_2;
 
+import java.awt.List;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  *
@@ -14,10 +16,12 @@ public class model {
     
     private String arrayType="";
     private int arraySize;
+    private String filledNumbers="";
     private String sortingAlgorithm="";
     private String output="";
     private String[]  columnNames= {"Index","Content"};
-    private interactiveTableModel myModel=new interactiveTableModel(getColumnNames());
+    private int numberOfDigit=0;
+    private interactiveTableModel myModel=new interactiveTableModel(columnNames);
     
     /**
      * @return the arrayType
@@ -49,6 +53,20 @@ public class model {
     
     
     /**
+     * @return the filledNumbers
+     */
+    public String getFilledNumbers() {
+        return filledNumbers;
+    }
+
+    /**
+     * @param filledNumbers the filledNumbers to set
+     */
+    public void setFilledNumbers(String filledNumbers) {
+        this.filledNumbers = filledNumbers;
+    }
+    
+    /**
      * @return the sortingAlgorithm
      */
     public String getSortingAlgorithm() {
@@ -61,6 +79,8 @@ public class model {
     public void setSortingAlgorithm(String sortingAlgorithm) {
         this.sortingAlgorithm = sortingAlgorithm;
     }
+    
+    
     
     public void initArray(int sizeArray){
         for (int i=0; i<sizeArray; i++){
@@ -134,6 +154,7 @@ public class model {
                 System.out.println("SWAP! New position: j("+i+"): "+(String) myModel.getValueAt(i, 1)+" -> j+1("+indexOfMinValue+"): "+(String) myModel.getValueAt(indexOfMinValue, 1));
         }
     }
+    
     /*
      Insertion sort takes the first member of the unsorted list and 
      * goes through the sorted list from it's last member step by step.
@@ -152,17 +173,23 @@ public class model {
      * O(n^2)
      */
     public void insertionSort(){
-        for (int i=0; i<arraySize; i++){
+        // you start with the 2nd index (i.e. index number "1")
+        for (int i=1; i<arraySize; i++){
             //get the first one of the sorted list and compare it to the member
             //at the end of the sorted list.  
             //int j=i;
             int j=i;
-            output+="\nCheck in sorted list i("+i+") "+(String) myModel.getValueAt(j, 1);
+            String firstMemberInUnsortedList=(String) myModel.getValueAt(j, 1);
 
-            while(j>0 && Integer.valueOf((String) myModel.getValueAt(j-1, 1)) > Integer.valueOf((String) myModel.getValueAt(j, 1))){
-                swap(j, j-1);
+            while(j>0 && Integer.valueOf((String) myModel.getValueAt(j-1, 1)) > Integer.valueOf(firstMemberInUnsortedList)){
+                //replace the member in j-1 with it's descendend in j
+                myModel.setValueAt(myModel.getValueAt(j-1, 1), j, 1);
                 j--;
-            }            
+                printOutArray();
+            }   
+            myModel.setValueAt(firstMemberInUnsortedList, j, 1);
+            output+="\n----------end while----------------";
+            printOutArray();
         }
     }
     
@@ -197,17 +224,214 @@ public class model {
      * 
      * O(n^2)
      */
-    public void bucketSort(){
-        // separate into 3 buckets
-        // 
+    public void bucketSort_insertionSort(){
+        output+="\nBucket + Insertion Sort";
+        ArrayList<String> bucket_0to2 = new ArrayList<String>();
+        ArrayList<String> bucket_3to5 = new ArrayList<String>();
+        ArrayList<String> bucket_6to8 = new ArrayList<String>();
+        ArrayList<String> bucket_9to11 = new ArrayList<String>(); 
+    
+        System.out.println("starts");
+        for (int i=0; i<myModel.getRowCount(); i++){
+            int item=Integer.valueOf((String) myModel.getValueAt(i, 1))/3;
+
+            switch(item){
+                case 0:
+                    System.out.println("0-2: "+myModel.getValueAt(i, 1));
+                    output+="\n"+i+"\t| "+myModel.getValueAt(i, 1) +"\t<-- will be transferred into bucket 0-2";
+                    bucket_0to2.add((String) myModel.getValueAt(i, 1));
+                    break;
+                case 1:
+                    System.out.println("3-5: "+myModel.getValueAt(i, 1));
+                    output+="\n"+i+"\t| "+myModel.getValueAt(i, 1) +"\t<-- will be transferred into bucket 3-5";
+                    bucket_3to5.add((String) myModel.getValueAt(i, 1));
+                    break;
+                case 2:
+                    System.out.println("6-8: "+myModel.getValueAt(i, 1));
+                    output+="\n"+i+"\t| "+myModel.getValueAt(i, 1) +"\t<-- will be transferred into bucket 6-8";
+                    bucket_6to8.add((String) myModel.getValueAt(i, 1));
+                    break;
+                case 3:
+                    System.out.println("9-11: "+myModel.getValueAt(i, 1));
+                    output+="\n"+i+"\t| "+myModel.getValueAt(i, 1) +"\t<-- will be transferred into bucket 9-11";                    
+                    bucket_9to11.add((String) myModel.getValueAt(i, 1));
+                    break;
+                default:
+                    break;
+            }
+        }
         
+        System.err.println("end");
+        
+        /*
+        String[] bucket_0to2_s;
+        String[] bucket_3to5_s;
+        String[] bucket_6to8_s;
+        String[] bucket_9to11_s;
+                
+        //sort arrays
+        bucket_0to2_s = insertionSort(bucket_0to2).toArray(new String[bucket_0to2.size()]);
+        bucket_3to5_s = insertionSort(bucket_3to5).toArray(new String[bucket_3to5.size()]);
+        bucket_6to8_s = insertionSort(bucket_6to8).toArray(new String[bucket_6to8.size()]);
+        bucket_9to11_s = insertionSort(bucket_9to11).toArray(new String[bucket_9to11.size()]);
+        */
+        bucket_0to2 = insertionSort(bucket_0to2);
+        bucket_3to5 = insertionSort(bucket_3to5);
+        bucket_6to8 = insertionSort(bucket_6to8);
+        bucket_9to11 = insertionSort(bucket_9to11);
+        
+        //merge the (now sorted) buckets into myModel:
+        //save the merge buckets in interim ArrayList
+        ArrayList<String> bucket_sorted = new ArrayList<String>();
+        bucket_sorted.addAll(bucket_0to2);
+        bucket_sorted.addAll(bucket_3to5);
+        bucket_sorted.addAll(bucket_6to8);
+        bucket_sorted.addAll(bucket_9to11);
+        
+        String[] bucket_sorted_array=bucket_sorted.toArray(new String[bucket_sorted.size()]);
+        
+        
+        
+        //transfer interim array to myModel via loop
+/*        for (int m=0; m<bucket_sorted.size(); m++){
+            myModel.setValueAt(bucket_sorted.get(m), m, 1);
+        }      */
+        merge(bucket_sorted_array);
     }
-    /*Efficient for larger arrays. Is done for non-comaritive integer sorting algortihm
-     * Two ways of doing it: 
+
+    public ArrayList<String> insertionSort(ArrayList<String> arr){
+        int arrSize=arr.size();
+
+        // you start with the 2nd index (i.e. index number "1")
+        for (int i=1; i<arrSize; i++){
+            //get the first one of the sorted list and compare it to the member
+            //at the end of the sorted list.  
+            //int j=i;
+            int j=i;
+            String firstMemberInUnsortedList=arr.get(j);
+
+            while(j>0 && Integer.valueOf(arr.get(j-1)) > Integer.valueOf(firstMemberInUnsortedList)){
+                //replace the member in j-1 with it's descendend in j
+                arr.set(j, arr.get(j-1));
+                j--;
+            }   
+            arr.set(j, firstMemberInUnsortedList);
+        }
+        return arr;
+    }
+    
+    private void merge(String... args){
+        
+        int m=0;
+        for(String arg: args){
+            myModel.setValueAt(arg, m, 1);
+            m++;
+        }
+    }
+    
+    private ArrayList<String> tableModelIntoArrayList(){
+        ArrayList<String> a=new ArrayList<String>();
+        for (int i=0; i<myModel.getRowCount(); i++){
+            a.add((String)myModel.getValueAt(i,1));
+        }
+        
+        return a;
+    }
+    
+    public void bucketSort(){
+        output+="\nBucket Sort";
+        ArrayList<String> bucket_0 = new ArrayList<String>();
+        ArrayList<String> bucket_1 = new ArrayList<String>();
+        ArrayList<String> bucket_2 = new ArrayList<String>();
+        ArrayList<String> bucket_3 = new ArrayList<String>(); 
+        ArrayList<String> bucket_4 = new ArrayList<String>();
+        ArrayList<String> bucket_5 = new ArrayList<String>();
+        ArrayList<String> bucket_6 = new ArrayList<String>();
+        ArrayList<String> bucket_7 = new ArrayList<String>(); 
+        ArrayList<String> bucket_8 = new ArrayList<String>();
+        ArrayList<String> bucket_9 = new ArrayList<String>();
+        
+        for (int i=0; i<myModel.getRowCount(); i++){            
+            switch(Integer.valueOf((String)myModel.getValueAt(i, 1))){
+                case 0:
+                    output+="\n"+i+"\t| "+myModel.getValueAt(i, 1) +"\t<-- will be transferred into bucket 0";
+                    bucket_0.add((String) myModel.getValueAt(i, 1));
+                    break;
+                case 1:
+                    bucket_1.add((String) myModel.getValueAt(i,1));
+                    output+="\n"+i+"\t| "+myModel.getValueAt(i, 1) +"\t<-- will be transferred into bucket 1";                    
+                    break;
+                case 2:
+                    bucket_2.add((String) myModel.getValueAt(i,1));
+                    output+="\n"+i+"\t| "+myModel.getValueAt(i, 1) +"\t<-- will be transferred into bucket 2";                    
+                    
+                    break;
+                case 3:
+                    bucket_3.add((String) myModel.getValueAt(i,1));
+                    output+="\n"+i+"\t| "+myModel.getValueAt(i, 1) +"\t<-- will be transferred into bucket 3";                    
+                    
+                    break;
+                case 4:
+                    bucket_4.add((String) myModel.getValueAt(i,1));
+                    output+="\n"+i+"\t| "+myModel.getValueAt(i, 1) +"\t<-- will be transferred into bucket 4";                    
+                    
+                    break;
+                case 5:
+                    bucket_5.add((String) myModel.getValueAt(i,1));
+                    output+="\n"+i+"\t| "+myModel.getValueAt(i, 1) +"\t<-- will be transferred into bucket 5";                    
+                    
+                    break;
+                case 6:
+                    bucket_6.add((String) myModel.getValueAt(i,1));
+                    output+="\n"+i+"\t| "+myModel.getValueAt(i, 1) +"\t<-- will be transferred into bucket 6";                    
+                    
+                    break;
+                case 7:
+                    bucket_7.add((String) myModel.getValueAt(i,1));
+                    output+="\n"+i+"\t| "+myModel.getValueAt(i, 1) +"\t<-- will be transferred into bucket 7";                    
+                    
+                    break;
+                case 8:
+                    bucket_8.add((String) myModel.getValueAt(i,1));
+                    output+="\n"+i+"\t| "+myModel.getValueAt(i, 1) +"\t<-- will be transferred into bucket 8";                    
+                    
+                    break;
+                case 9:
+                    bucket_9.add((String) myModel.getValueAt(i,1));
+                    output+="\n"+i+"\t| "+myModel.getValueAt(i, 1) +"\t<-- will be transferred into bucket 9";                    
+                    
+                    break;
+                default:
+                    break;
+            }
+        }     
+        
+        ArrayList<String> bucket_sorted = new ArrayList<String>();
+        bucket_sorted.addAll(bucket_0);
+        bucket_sorted.addAll(bucket_1);
+        bucket_sorted.addAll(bucket_2);
+        bucket_sorted.addAll(bucket_3);
+        bucket_sorted.addAll(bucket_4);
+        bucket_sorted.addAll(bucket_5);
+        bucket_sorted.addAll(bucket_6);
+        bucket_sorted.addAll(bucket_7);
+        bucket_sorted.addAll(bucket_8);
+        bucket_sorted.addAll(bucket_9);
+        
+        String[] bucket_sorted_array=bucket_sorted.toArray(new String[bucket_sorted.size()]);
+        
+        merge(bucket_sorted_array);
+    }
+    
+    /*The Radix Sort is most efficient for larger arrays. 
+     * It is done for non-comparitive integer sorting algortihm.
+     * There are two ways of doing it: 
+     * 
      * Least Significan Digit (LSD), Most Significant Digit (MSD). This only means
      * where to start sorting. LSD means in this context that we start with the
      * far right digit. E.g. the far right digit of number 123 is the position where
      * number 3 is. MSD means we start at the position where number 1 is.
+     * 
      * In the following example the focus is on LSD.
      * We have 10 buckets. Each carries one of the values from 0 to 9. We will go through the list from 
      * left to right. Given we have 3 digit numbers, then we first look at the value of the
@@ -230,14 +454,116 @@ public class model {
      * 
      * O(k*n)
      */
+    
+    // returns a radix sorted list
+     private ArrayList<String> SortRadix(int digit, ArrayList<String> arr){
+     
+         ArrayList<String> bucket_sorted = new ArrayList<String>();
+            
+         if (digit==0)
+            return arr;
+         else{
+            ArrayList<String> bucket_0 = new ArrayList<String>();
+            ArrayList<String> bucket_1 = new ArrayList<String>();
+            ArrayList<String> bucket_2 = new ArrayList<String>();
+            ArrayList<String> bucket_3 = new ArrayList<String>(); 
+            ArrayList<String> bucket_4 = new ArrayList<String>();
+            ArrayList<String> bucket_5 = new ArrayList<String>();
+            ArrayList<String> bucket_6 = new ArrayList<String>();
+            ArrayList<String> bucket_7 = new ArrayList<String>(); 
+            ArrayList<String> bucket_8 = new ArrayList<String>();
+            ArrayList<String> bucket_9 = new ArrayList<String>();
+
+            
+            // goes throught the transferred array "arr" 
+            // and checks all of it's members
+            for (int i=0; i<arr.size(); i++){
+
+                //"radix" contains the digits of the current number 
+                String[] radix=(arr.get(i).split(""));
+                System.out.println("String--> "+arr.get(i));
+                System.out.println("lenght--> "+(radix.length-1));
+                int digi=numberOfDigit!=radix.length-1?digit-(numberOfDigit-(radix.length-1)):digit;
+                
+                String nthDigit;
+                try{
+                    nthDigit=radix[digi].equals("")?"0": String.valueOf(radix[digi]);
+                }catch(Exception ex){
+                    nthDigit="0";
+                }
+                
+                System.out.println("Into bucket "+nthDigit);
+                //check the nth Digit
+                switch(nthDigit){
+                    //transfer it into the table
+                    case "":
+                    case "0":
+                        bucket_0.add(arr.get(i));
+                        break;
+                    case "1":
+                        bucket_1.add(arr.get(i));
+                        break;
+                    case "2":
+                        bucket_2.add(arr.get(i));
+                        break;
+                    case "3":
+                        bucket_3.add(arr.get(i));
+                        break;
+                    case "4":
+                        bucket_4.add(arr.get(i));
+                        break;
+                    case "5":
+                        bucket_5.add(arr.get(i));
+                        break;
+                    case "6":
+                        bucket_6.add(arr.get(i));
+                        break;
+                    case "7":
+                        bucket_7.add(arr.get(i));
+                        break;
+                    case "8":
+                        bucket_8.add(arr.get(i));
+                        break;
+                    case "9":
+                        bucket_9.add(arr.get(i));
+                        break;
+                    default:
+                        System.out.println("case doesn't exist");
+                                
+                        break;
+                }
+            }
+            //merge into one array, which is "bucket_sorted"
+            bucket_sorted.addAll(bucket_0);
+            bucket_sorted.addAll(bucket_1);
+            bucket_sorted.addAll(bucket_2);
+            bucket_sorted.addAll(bucket_3);
+            bucket_sorted.addAll(bucket_4);
+            bucket_sorted.addAll(bucket_5);
+            bucket_sorted.addAll(bucket_6);
+            bucket_sorted.addAll(bucket_7);
+            bucket_sorted.addAll(bucket_8);
+            bucket_sorted.addAll(bucket_9);
+            System.out.println("-----------"+digit+"-------------------");
+            return SortRadix(digit-1, bucket_sorted);
+         }
+     }
+     
     public void radixSort(){
         
+        numberOfDigit=3;
+        //translate tableModel into array
+        String[] bucket_sorted_array=(SortRadix(numberOfDigit, tableModelIntoArrayList())).toArray(new String[myModel.getRowCount()]);
+        
+        //merge array into table model
+        merge(bucket_sorted_array);        
     }
     
     /*In Quicksort you select one element in the list and partion the list into
-     * two sets: One that only conains slements that are larger than the pivot
-     * and one that only contains elements smaller than the pivot. 
-     * In order to do so, we start with a two pointers: 
+     * two sets: One that only conains slements that are larger than the 
+     * selected element, also called 'pivot', and one that only contains 
+     * elements smaller than the pivot. In order to do so, we start with a two 
+     * pointers: 
      * One at the very beginning and one at the very end of the list. 
      * We move the pointer at the beginning one step up to the other end 
      * until it reaches a value that is larger than or equal the pivot. 
@@ -373,5 +699,9 @@ public class model {
      */
     public void setOutput(String output) {
         this.output = output;
+    }
+    
+    public void outputClear(){
+        output="";
     }
 }

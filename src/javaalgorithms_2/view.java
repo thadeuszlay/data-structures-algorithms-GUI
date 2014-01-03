@@ -22,7 +22,8 @@ import javax.swing.table.AbstractTableModel;
 public class view extends JFrame {
 
     String[] dataStructureTypes={"", "Array","Stack","Queue"};
-    String[] sorting={"", "Bubble Sort","Insertion Sort","Selection Sort","Bucket Sort","Radix Sort","Quick Sort","Merge Sort","Heap Sort"};
+    String[] sorting={"", "Bubble Sort","Insertion Sort","Selection Sort","Bucket + Insertion Sort", "Bucket Sort","Radix Sort","Quick Sort","Merge Sort","Heap Sort"};
+    String[] filledNumbers={"", "unique numbers (0-9)", "non unique numbers (0-9)","big (up to 3 digit) numbers"};
     
     private String[] columnNames= {"",""};
     
@@ -34,7 +35,8 @@ public class view extends JFrame {
     private JButton bCreateArray=new JButton("Create Array");
     private JScrollPane jscrollPane=new JScrollPane();
     private JTable table=new JTable();
-    private JRadioButton rUnique=new JRadioButton("Unique values");
+//    private JRadioButton rUnique=new JRadioButton("Unique values");
+    private JComboBox cFilledNumbers=new JComboBox(filledNumbers);
     private JButton bFill=new JButton("Fill randomly");
     private JButton bEmpty=new JButton("Empty Table");
     private JTextField tValue=new JTextField(6);
@@ -74,8 +76,9 @@ public class view extends JFrame {
         Dimension d=table.getPreferredSize();
         jscrollPane.setPreferredSize(new Dimension(d.width, 200));
         panel.add(jscrollPane);
-        panel.add(rUnique);
-        rUnique.setSelected(true);
+        //panel.add(rUnique);
+        //rUnique.setSelected(true);
+        panel.add(cFilledNumbers);
         panel.add(bFill);
         panel.add(bEmpty);
         panel.add(tValue);
@@ -144,10 +147,10 @@ public class view extends JFrame {
             return -1234567890;
         }
     }
-    
+    /*
     public boolean getRUnique(){
         return rUnique.isSelected();
-    }
+    }*/
         
     void addComboBoxSelectListener(ActionListener ListenForComboSelect){
         dataStructureList.addActionListener(ListenForComboSelect);
@@ -155,6 +158,10 @@ public class view extends JFrame {
     
     void addSetArrayListener(ActionListener ListenForButton){        
         bCreateArray.addActionListener(ListenForButton);
+    }
+    
+    void addComboBoxFilledNumbers(ActionListener ListenForComboSelect){
+        cFilledNumbers.addActionListener(ListenForComboSelect);
     }
     
     void addFillRandomlyListener(ActionListener ListenForButton){

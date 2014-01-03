@@ -25,6 +25,7 @@ public class controller {
         this.theView=theView;
         this.theView.addComboBoxSelectListener(new selectOptionInCB());
         this.theView.addSetArrayListener(new setArray());
+        this.theView.addComboBoxFilledNumbers(new filledNumbers());
         this.theView.addFillRandomlyListener(new fillRandomly());
         this.theView.addEmptyTableListener(new emptyTable());
         this.theView.addFindListener(new find());
@@ -41,7 +42,6 @@ public class controller {
             JComboBox cb=(JComboBox)e.getSource();
             theModel.setArrayType((String)cb.getSelectedItem());
             System.out.println("Selected item is "+theModel.getArrayType());
-            theView.printOutTextArea("hello world\n");
         }
         
     }
@@ -70,8 +70,16 @@ public class controller {
                         break;
             }
         }
-        
     }
+    
+    class filledNumbers implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {            
+            JComboBox cb=(JComboBox)e.getSource();
+            theModel.setFilledNumbers((String)cb.getSelectedItem());
+        }
+    }
+    
     class fillRandomly implements ActionListener{
 
         @Override
@@ -79,7 +87,7 @@ public class controller {
             theModel.deleteTable();
             int arraySize=theModel.getArraySize();
             String randomValue="";
-            if (theView.getRUnique()){
+            if (theModel.getFilledNumbers()=="unique numbers (0-9)"){
                 if (arraySize<11){
                     // fill with unique items
                     for (int i=0;i<arraySize;i++){
@@ -104,14 +112,23 @@ public class controller {
                 }else{
                     theView.popUpMessage("Select a Array Size between 1 and 10!");
                 }
+            }else if (theModel.getFilledNumbers()=="non unique numbers (0-9)"){
+                fillRandomlyUpTo(10, arraySize);
+            }else if(theModel.getFilledNumbers()=="big (up to 3 digit) numbers"){
+                fillRandomlyUpTo(1000, arraySize);
             }else{
-                for (int i=0;i<arraySize;i++){
-                    randomValue=String.valueOf((int)Math.floor(Math.random()*10));
-                    theModel.addRow(String.valueOf(i), randomValue);
-                    theView.updateTable(theModel.getMyModel(), theModel.getColumnNames());
-                }
+                theView.popUpMessage("Please select what kind of numbers you want the datastructre to be filled with.");
             }
         }   
+    }
+    
+    private void fillRandomlyUpTo(int upToNumber, int arraySize){
+        String randVal="";
+        for (int i=0;i<arraySize;i++){
+            randVal=String.valueOf((int)Math.floor(Math.random()*upToNumber));
+            theModel.addRow(String.valueOf(i), randVal);
+            theView.updateTable(theModel.getMyModel(), theModel.getColumnNames());
+        }
     }
     
     class emptyTable implements ActionListener{
@@ -175,7 +192,9 @@ public class controller {
             //check for selected sorting algorithm
             String sortAlgo=theModel.getSortingAlgorithm();
             System.out.println(sortAlgo);
-            theModel.printOutArray();
+            theModel.outputClear();
+            theModel.setOutput("\nIndex\t|Value");
+            theModel.printOutArray();            
             switch(sortAlgo){
                 case "Bubble Sort":
                     theModel.bubbleSort();
@@ -187,18 +206,35 @@ public class controller {
                 case "Selection Sort":
                     theModel.selectionSort();
                     break;
+                case "Bucket + Insertion Sort":
+                    if (theModel.getFilledNumbers()!="big (up to 10 digit) numbers"){
+                        theModel.bucketSort_insertionSort();
+                    }else{
+                        theView.popUpMessage("Select the option of filling in with numbers between 0 to 9!");
+                    }
+                    break;
                 case "Bucket Sort":
+                    if (theModel.getFilledNumbers()!="big (up to 10 digit) numbers"){
+                        theModel.bucketSort();
+                    }else{
+                        theView.popUpMessage("Select the option of filling in with numbers between 0 to 9!");                        
+                    }
                     break;
                 case "Radix Sort":
+                    theModel.radixSort();
                     break;
                 case "Quick Sort":
+                    theModel.quickSort();
                     break;
                 case "Merge Sort":
+                    theModel.mergeSort();
                     break;
                 case "Heap Sort":
+                    theModel.heapSort();
                     break;
                 default:
                     System.out.println("Please selet a sorting algorithm, in order to sort.");
+                    theView.popUpMessage("Please selet a sorting algorithm, in order to sort.");
                     break;
             }
             theModel.printOutArray();
